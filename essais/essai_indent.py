@@ -1,5 +1,5 @@
 from pygments import highlight
-from pygments.lexer import RegexLexer, bygroups
+from pygments.lexer import RegexLexer
 from pygments.token import *
 from pygments.formatters import TerminalFormatter
 
@@ -13,9 +13,11 @@ class MyLanguageLexer(RegexLexer):
         'root': [
             (r'\s+', Text),
             (r'#.*$', Comment),
-
             # Indentation rule for increasing indentation level
-            (r'^(.*:\n)([ \t]*)', bygroups(using(this), Text), 'indent'),
+            (r'^(.*:\n)([ \t]*)', [
+                (r'\2', Token.Text),
+                (r'.*\n', Token.Text, '#pop'),
+            ], 'indent'),
             # Indentation rule for decreasing indentation level
             (r'^([ \t]*)(?=\S)', Text, 'dedent'),
             # Other token rules for syntax highlighting
@@ -37,15 +39,12 @@ class MyLanguageLexer(RegexLexer):
 
 # Load the script to be highlighted
 script = '''
-/*** Ajouter MESSAGE sur Ac. HBST si valeur < 10 ou < 100 et > 1000***/
-
-IF .Result.NumericValue() < 10  THEN
-
-IF .Result.Order.Issuer.Ward().Mnemonic = "4506" OR .Result.Order.Issuer.Ward().Mnemonic = "4516" OR .Result.Order.Issuer.Ward().Mnemonic = "4536" 
-THEN MESSAGE ("ATTENTION résultat inférieur à 10, si dossier DIALYSE ou AURA, rajouter l'Ag HBS dans GLIMS !!!!");
-.CascadeRequest("HBS");ENDIF;
-
-ENDIF;
+if condition:
+    print("Hello, world!")
+    if nested_condition:
+        print("Nested statement")
+else:
+    print("Goodbye, world!")
 '''
 
 # Get the lexer for the custom language

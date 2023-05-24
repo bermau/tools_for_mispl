@@ -1,0 +1,37 @@
+/* DECL_HBSTRE_DSP 4 + TAP_SERO_S */
+
+
+/*** Ajouter MESSAGE sur Ac. HBST si valeur < 10 ou < 100 et > 1000***/
+
+IF .Result.NumericValue() < 10  THEN
+
+IF .Result.Order.Issuer.Ward().Mnemonic = "4506" OR .Result.Order.Issuer.Ward().Mnemonic = "4516" OR .Result.Order.Issuer.Ward().Mnemonic = "4536" 
+THEN MESSAGE ("ATTENTION résultat inférieur à 10, si dossier DIALYSE ou AURA, rajouter l'Ag HBS dans GLIMS !!!!");
+.CascadeRequest("HBS");ENDIF;
+
+ENDIF;
+
+IF .Result.Order.Issuer.Ward().Mnemonic = "0252"  AND .Result.NumericValue() < 100 
+
+THEN MESSAGE ("ATTENTION résultat inférieur à 100, si dossier MEDECINE DU TRAVAIL, rajouter HBCT dans GLIMS !!!!");
+.CascadeRequest("HBCT");
+
+ENDIF;
+
+
+IF .Result.Order.Issuer.Ward().Mnemonic = "0252"  AND .Result.NumericValue() > 1000
+
+THEN MESSAGE ("ATTENTION résultat supérieur à 1000, si dossier MEDECINE DU TRAVAIL, supprimerr HBCT dans GLIMS !!!!");
+
+ENDIF;
+
+IF .Result.NumericValue() >7.999 AND .Result.NumericValue() < 11.999  THEN
+
+MESSAGE ("ATTENTION, Résultat douteux, vous devez repasser en double les AC anti HBST avant confirmation !!!!");
+ENDIF;
+
+/* modif par BMA (I_0693) : ajout d'un commentaire si zone incertitude */
+/**.Action.Order().AddRequest("TAP_SERO_VIR_S", ?, ?);**/
+
+RETURN YES;
+

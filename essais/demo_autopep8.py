@@ -6,8 +6,8 @@ texte = """
 import truc 
  import machin, chose
 
-def ma_Fonction(a):
-       return (a *2)
+def ma_Fonction_mal_écrite(a):
+       return (   a *   2)
        
  
 """
